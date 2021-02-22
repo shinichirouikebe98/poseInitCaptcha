@@ -1,3 +1,9 @@
+<h1>この作品に関しての説明：</h1>
+<p>この作品は自動化攻撃プログラムによるSPAMが大きな社会問題となって、これを阻止するために人間識別技術CAPTCHAと言う技術が誕生しているが自動化攻撃プログラムも進化している。自動化攻撃プログラムによるSPAMを対処する、機械学習による姿勢推定を適用したCaptchaの実装と検証が目的となっている作品です。</p>
+
+
+
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
 
 <p align="center">
