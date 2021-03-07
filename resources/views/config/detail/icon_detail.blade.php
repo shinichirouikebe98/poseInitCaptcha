@@ -9,7 +9,7 @@
                     <input type="hidden" name="icons_id" id="icons_id" value="{{$poseicons->icons_id}}" readonly> 
                     <input type="hidden" name="old_name" id="old_name" value="{{$poseicons->icons}}" readonly>   
                     <label>ポーズアイコンネーム:</label>
-                    <input type="text" name="icons_name" id="icons_name" value="{{$poseicons->icons_name}}" class="form-control">
+                    <input type="text" name="names" id="names" value="{{$poseicons->name}}" class="form-control">
                     <label>ポーズアイコンファイル:</label>
                     <input type="file" name="icons" id="icons" class="">
                 </div>                   
@@ -26,23 +26,16 @@
                         </ul>
                     </div>
         @endif
-        @if (session('icons_status'))
-            <div class="alert alert-success">{{ session('icons_status') }}</div>
-        @endif
-        @if (session('icons_error_status'))
-            <div class="alert alert-danger">{{ session('icons_error_status') }}</div>
-        @endif
-        
             <div class="big-boxes center neumophism">
                     <div class="icons-frame">
-                    <img src="{{ asset('img/'. $poseicons->icons .'') }}" class="rounded img-fluid" />
+                    <img src="{{ asset('storage/img/'. $poseicons->icons .'') }}" class="rounded img-fluid" />
                     </div>
                     <h1>{{$poseicons->name}}</h1>
                     <div class="info box">
                         <h4 class="mini-title">ICON 情報</h4>
                         <ul>
                             <li>ICON ID : {{$poseicons->icons_id}}</li>
-                            <li>ICON ネーム: {{$poseicons->icons_name}}</li>
+                            <li>ICON ネーム: {{$poseicons->name}}</li>
                             <li>ファイルネーム: {{$poseicons->icons}}</li>
                         </ul>
                     </div>

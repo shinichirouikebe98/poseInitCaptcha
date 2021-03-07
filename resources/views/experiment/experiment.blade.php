@@ -25,7 +25,7 @@
       .size{
         font-size: 30px;
         font-family: 'Kosugi Maru', sans-serif;
-        margin:20px;
+        margin:40px;
       }
       .inputText{
         border-radius: 4px;
@@ -35,7 +35,13 @@
         padding-left: 7px;
         margin-top: 10px;
       }
-
+      input[type=button]{
+        width: 120px;
+        height: 30px;
+        background-color: antiquewhite;
+        border-radius: 8px;
+        margin-top: 10px;
+      }
       input[type=checkbox]{
         width: 40px;
         height: 40px;

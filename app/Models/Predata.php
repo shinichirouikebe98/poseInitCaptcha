@@ -9,5 +9,5 @@ class Predata extends Model
 {
     use HasFactory;
     protected $primaryKey = 'predata_id';
-    protected $fillable = ['predata_cat_name','predata_name','number','pose_one','pose_two','pose_three'];
+    protected $fillable = ['name','predata_name','number','pose_one','pose_two','pose_three'];
 }

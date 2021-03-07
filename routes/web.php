@@ -39,7 +39,7 @@ Route::patch('/poseicon/update/{poseicon}', [PoseiconsController::class, 'update
 
 
 //predata
-Route::post('/predatas', [PredatasController::class, 'store']);
+Route::post('/predata', [PredatasController::class, 'store']);
 Route::get('/predata/req', [PredatasController::class, 'getPredata']);
 Route::get('/predata/{predata}', [PredatasController::class, 'show']);
 Route::delete('/predata/{predata}', [PredatasController::class, 'destroy']);
@@ -55,7 +55,7 @@ Route::get('/experiment/metadata', [ExperimentController::class, 'getMetadata'])
 Route::get('/experiment/predata/{predata}', [ExperimentController::class, 'getPredata']);
 
 //metadata
-Route::post('/metadatas', [MetadatasController::class, 'store']);
+Route::post('/metadata', [MetadatasController::class, 'store']);
 Route::get('/metadata/req', [MetadatasController::class, 'getMeta']);
 Route::get('/metadata/{metadata}', [MetadatasController::class, 'show']);
 Route::get('/metadata/search/{metadata}', [MetadatasController::class, 'search']);

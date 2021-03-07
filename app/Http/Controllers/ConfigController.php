@@ -16,18 +16,16 @@ class ConfigController extends Controller
      */
     public function index()
     {   
-        $unpaginate_poseicons = Poseicon::all();
         $poseicons = Poseicon::paginate(5);
         $predatas = Predata::paginate(5);
         $metadatas = Metadata::paginate(5);
-        $active_metadata = Metadata::select('metadata_name')->where('active','active')->get();
+        $active_metadata = Metadata::select('name')->where('active','active')->get();
         return view('config.config',
                 [
                 'poseicons' => $poseicons ,
                 'predatas' => $predatas,
                 'metadatas' => $metadatas,
-                'active_data' => $active_metadata,
-                'unpage_icons' => $unpaginate_poseicons
+                'active_data' => $active_metadata
                 ]
         );
     }

@@ -39,28 +39,20 @@ class PredatasController extends Controller
     public function store(Request $request)
     {
             $request->validate([
-                'predata_cat_name' => 'required|unique:predatas|max:10',
+                'name' => 'required|unique:predatas|max:10',
                 'predata' => 'required',
                 'number' => 'required',
                 'pose1' => 'required',
                 'pose2' => 'nullable',
                 'pose3' => 'nullable',
             ]);
-             
+        
             $file = $request->file('predata');
             $filename = 'predata-' . time() . '.' . $file->getClientOriginalExtension();
-            $file->storeAs('/predata', $filename,'public_store');
+            $file->storeAs('public/predata', $filename);
             
-            if($request->pose2 == null){
-                $request->pose2 = '-';
-                $request->pose3 = '-';
-            }
-            else if($request->pose3 == null){
-                $request->pose3 = '-';
-            }
-
             Predata::create([
-                'predata_cat_name' => $request->predata_cat_name,
+                'name' => $request->name,
                 'predata_name' => $filename,
                 'number' => $request->number,
                 'pose_one' => $request->pose1,
@@ -68,9 +60,8 @@ class PredatasController extends Controller
                 'pose_three' => $request->pose3,
             ]);
             
-            return redirect('/config')->with('predata_status','学習の登録はできませんでした！');
+            return redirect('/config');
     }
-
 
     /**
      * Display the specified resource.
@@ -105,7 +96,7 @@ class PredatasController extends Controller
     {
         $request->validate([
             'predata_id' => 'required',
-            'predata_cat_name' => 'required|max:10',
+            'name' => 'required|max:10',
             'predata' => 'sometimes|nullable|max:120000|file|mimetypes:application/json,text/plain',
             'number' => 'required',
             'pose1' => 'required',
@@ -117,14 +108,12 @@ class PredatasController extends Controller
         if($request->file('predata') == !null){
             $file = $request->file('predata');
             $filename = 'predata-' . time() . '.' . $file->getClientOriginalExtension();//
-            $file->storeAs('/predata', $filename, 'public_store');//名前変更で保存
+            $file->storeAs('public/predata', $filename);//名前変更で保存
 
             $path = '/predata/'.$request->old_name.''; //急ファイルのパス
             //ファイルがあるかどいうかチェック
-            if(Storage::disk('public_store')->exists($path)){
-                Storage::disk('public_store')->delete($path); 
-            }else{
-                return redirect('/predata/'.$request->predata_id)->with('predata_error_status','学習データの更新はできませんでした！');
+            if(Storage::disk('public')->exists($path)){
+                Storage::disk('public')->delete($path); 
             }
         }
         else{
@@ -133,14 +122,14 @@ class PredatasController extends Controller
         //データを更新
         Predata::where('predata_id', $request->predata_id)
             ->update([
-                'predata_cat_name' => $request->predata_cat_name,
+                'name' => $request->name,
                 'predata_name' => $filename,
                 'number' => $request->number,
                 'pose_one' => $request->pose1,
                 'pose_two' => $request->pose2,
                 'pose_three' => $request->pose3,           
          ]);
-         return redirect('/config')->with('predata_status','学習データの更新が完了しました！');
+         return redirect('/config');
     }
 
     /**
@@ -153,15 +142,15 @@ class PredatasController extends Controller
     {
         $path = '/predata/'.$predata->predata_name;
         //削除    
-        if(Storage::disk('public_store')->exists($path)){
-            if(Storage::disk('public_store')->delete($path)){
+        if(Storage::disk('public')->exists($path)){
+            if(Storage::disk('public')->delete($path)){
                 //画像情報を削除
                 Predata::destroy($predata->predata_id);
             } else{
-                return redirect('/predata/'.$predata->predata_id)->with('predata_error_status','学習データの削除ができませんでした！');
+                
             }
         }
-        return redirect('/config')->with('predata_status','学習データの削除は完了しました！');
+        return redirect('/config')->with('status','データの削除は完了しました！');
     }
 
     //train
@@ -174,7 +163,7 @@ class PredatasController extends Controller
     }
     public function search($request){
         $predata = Predata::where('predata_id','LIKE','%'.$request.'%')
-        ->orwhere('predata_cat_name','LIKE','%'.$request.'%')->get();
+        ->orwhere('name','LIKE','%'.$request.'%')->get();
         return $predata;
     }
     public function getPredata(){

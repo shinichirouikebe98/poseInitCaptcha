@@ -11,16 +11,16 @@
                     <input type="hidden" name="old_model" id="old_model" value="{{$metadatas->model}}">
                     <input type="hidden" name="old_weight" id="old_weight" value="{{$metadatas->model_weight}}">  
                     <label>ポーズモデル名:</label>
-                    <input type="text" name="name" id="name" value="{{$metadatas->metadata_name}}" class="form-control">
+                    <input type="text" name="name" id="name" value="{{$metadatas->name}}" class="form-control">
 
                     <label>カテゴリー</label>
                     <select name="predata_id" id="predata_id" class="select">
                         @foreach($predatas as $predata)
-                            <option value="{{$predata->predata_id}}">{{$predata->predata_cat_name}}</option>
+                            <option value="{{$predata->predata_id}}">{{$predata->name}}</option>
                         @endforeach
                         <option value="{{$metadatas->predata}}" selected>
                             @foreach($name as $name)
-                                 {{$name->predata_cat_name}}
+                                 {{$name->name}}
                             @endforeach
                         </option>
                     </select>
@@ -49,28 +49,16 @@
                         </ul>
                     </div>
          @endif
-         @section('uses')
-        @if (session('metadata_status'))
-            <div class="alert alert-success">
-                {{ session('metadata_status') }}
-            </div>
-        @endif
-        @if (session('metadata_error_status'))
-            <div class="alert alert-success">
-                {{ session('metadata_error_status') }}
-            </div>
-        @endif
-        
             <div class="big-boxes center neumophism">
                     <div class="icons-frame">
-                        <img src="{{ asset('/img/logo.png') }}" class="rounded img-fluid" style="padding:30px;" />
+                        <img src="{{ asset('storage/img/logo.png') }}" class="rounded img-fluid" style="padding:30px;" />
                     </div>
                     <h1>{{$metadatas->name}}</h1>
                     <div class="info box">
                         <h4 class="mini-title">ICON 情報</h4>
                         <ul>
                             <li>METADATA ID : {{$metadatas->metadata_id}}</li>
-                            <li>METADATA ネーム: {{$metadatas->metadata_name}}</li>
+                            <li>METADATA ネーム: {{$metadatas->name}}</li>
                             <li>PREDATA ID: {{$metadatas->predata}}</li>
                             <li>ポーズ数: {{$metadatas->number}}</li>
                             <li>メタ・モデル: {{$metadatas->meta_model}}</li>

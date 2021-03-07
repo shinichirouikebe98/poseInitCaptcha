@@ -38,7 +38,7 @@ class MetadatasController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'metadata_name' => 'required|unique:metadatas|max:10',
+            'name' => 'required|unique:metadatas|max:10',
             'predata_id' => 'required',
             'num' => 'required',
             'meta-model' => 'required|max:12000|file|mimetypes:application/json,text/plain',
@@ -48,7 +48,7 @@ class MetadatasController extends Controller
     
         $file = array($request->file('meta-model'),$request->file('model'),$request->file('meta-weight'));
         $renamedFile = array();        
-        //ファイル分け
+
         for ($i = 0; $i < count($file); $i++) {
             $ext = $file[$i]->getClientOriginalExtension();
             $folder = 'lost';
@@ -66,17 +66,16 @@ class MetadatasController extends Controller
                 }
             } 
             else {
-                return redirect('/config')->with('metadata_error_status','モデルデータの登録はできませんでした！');
-            }
 
-            $path = '/metadata/'.$folder;
-            $file[$i]->storeAs($path,$filename,'public_store');
+            }
+            $path = '/public/metadata/'.$folder;
+            $file[$i]->storeAs($path,$filename);
             array_push($renamedFile,$filename);
         }
         
         
         Metadata::create([
-            'metadata_name' => $request->name,
+            'name' => $request->name,
             'predata' => $request->predata_id,
             'number' => $request->num,
             'meta_model' => $renamedFile[0],
@@ -85,7 +84,7 @@ class MetadatasController extends Controller
             'active' => $active = 'not_active',
         ]);
         
-        return redirect('/config')->with('metadata_status','モデルデータの登録が完了しました！');
+        return redirect('/config');
     }
 
     /**
@@ -97,8 +96,7 @@ class MetadatasController extends Controller
     public function show(Metadata $metadata)
     {
         $predata = Predata::all();
-        $predata_id = Predata::select('predata_cat_name')->where('predata_id',$metadata->predata)->get();
-        
+        $predata_id = Predata::select('name')->where('predata_id',$metadata->predata)->get();
         return view('config.detail.metadata_detail',[ 'metadatas' => $metadata,'predatas' => $predata , 'name' => $predata_id]);
     }
 
@@ -124,7 +122,7 @@ class MetadatasController extends Controller
     {
         $request->validate([
             'id' => 'required',
-            'metadata_name' => 'required|max:10',
+            'name' => 'required|max:10',
             'predata_id' => 'required',
             'num' => 'required',
             'meta-model' => 'sometimes|nullable|max:12000|file|mimetypes:application/json,text/plain',
@@ -136,7 +134,7 @@ class MetadatasController extends Controller
         $file = array($request->file('meta-model'),$request->file('model'),$request->file('meta-weight'));
         $old_file = array($request->old_meta_model,$request->old_model,$request->old_weight);
         $checkedFile = array(); 
-        //ファイル分け
+
         for($j=0; $j < count($file); $j++){
             if($file[$j] == null){
                 array_push($checkedFile,$old_file[$j]);
@@ -160,16 +158,16 @@ class MetadatasController extends Controller
                         $old_name = $request->old_meta_model;
                     }
                 }
-                $path = '/metadata/'.$folder.'/'.$old_name;
-                $storePath = '/metadata/'.$folder;  
+                $path = 'metadata/'.$folder.'/'.$old_name;
+                $storePath = '/public/metadata/'.$folder;  
 
-                if (Storage::disk('public_store')->exists($path)) {
-                        Storage::disk('public_store')->delete($path);
+                if (Storage::disk('public')->exists($path)) {
+                        Storage::disk('public')->delete($path);
                 }
                 else{
-                    return redirect('/metadata/'.$request->id)->with('metadata_error_status','モデルデータの登録はできませんでした！');
+    
                 } 
-                $file[$j]->storeAs($storePath,$filename,'public_store');
+                $file[$j]->storeAs($storePath,$filename);
                 array_push($checkedFile,$filename);
 
                 
@@ -178,7 +176,7 @@ class MetadatasController extends Controller
         }      
         
         Metadata::where('metadata_id',$request->id)->update([
-            'metadata_name' => $request->name,
+            'name' => $request->name,
             'predata' => $request->predata_id,
             'number' => $request->num,
             'meta_model' => $checkedFile[0],
@@ -186,7 +184,7 @@ class MetadatasController extends Controller
             'model_weight' => $checkedFile[2],
         ]);
         
-        return redirect('/metadata/'.$request->id)->with('metadata_status','モデルの更新が完了しました！');
+        return redirect('/config');
         
     }
 
@@ -204,19 +202,20 @@ class MetadatasController extends Controller
         for($i = 0; $i < count($filename); $i++ ){
             $path = '/metadata/'.$folder[$i].'/'.$filename[$i];
             //削除 
-            if(Storage::disk('public_store')->exists($path)){
-                if(Storage::disk('public_store')->delete($path)){
+            if(Storage::disk('public')->exists($path)){
+                if(Storage::disk('public')->delete($path)){
                     //Metadata情報を削除
                     Metadata::destroy($metadata->metadata_id);
                 } else{
-                    return redirect('/metadata/'.$metadata->metadata_id)->with('metadata_error_status','モデルデータの削除はできませんでした！'); 
+                    $feedback = 'delete failed';
+                    
                 }
             }
             else{
-                return redirect('/metadata/'.$metadata->metadata_id)->with('metadata_error_status','モデルデータの削除はできませんでした！');
+                $feedback = 'not exist';
             }
         }     
-      return redirect('/config')->with('metadata_status','モデルデータの削除は完了しました！');
+      return redirect('/config')->with('status','モデルの削除は完了しました！');
     }
 
     public function getNum($predata){
@@ -228,17 +227,17 @@ class MetadatasController extends Controller
 
     public function active(Request $request){
 
-       if(Metadata::query()->update([ 'active' => 'not_active'])){
+       if(Metadata::query()->update([ 'active' => 'not_active' ])){
             Metadata::where('metadata_id',$request->metadata)->update([ 'active' => 'active' ]);
        }
        else{
-        return redirect('/config')->with('metadata_error_status','モデルデータの仕使用変更はできませんでした！');
+           return 'shippai';
        }
-       return redirect('/config')->with('metadata_status','モデルの使用変更完了しました！');
+       return redirect('/config')->with('status','モデルの使用変更完了しました！');
 
     }
     public function search($metadata){
-        $meta = Metadata::where('metadata_id','LIKE','%'.$metadata.'%')->orwhere('metadata_name','LIKE','%'.$metadata.'%')
+        $meta = Metadata::where('metadata_id','LIKE','%'.$metadata.'%')->orwhere('name','LIKE','%'.$metadata.'%')
         ->orwhere('number','LIKE','%'.$metadata.'%')->get();
         return $meta;
     }
