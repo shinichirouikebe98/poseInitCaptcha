@@ -38,19 +38,18 @@ class PoseiconsController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|unique:poseicons|max:10',
+            'icons_name' => 'required|unique:poseicons|max:10',
             'icons' => 'required|max:12000|mimes:png,jpg',
         ]);
     
         $file = $request->file('icons');
         $filename = 'pose-photo-' . time() . '.' . $file->getClientOriginalExtension();
-        $file->storeAs('public/img', $filename);
-        
+        $file->storeAs('/img', $filename,'public_store');
         Poseicon::create([
-            'name' => $request->name,
+            'icons_name' => $request->icons_name,
             'icons' => $filename
         ]);
-        return redirect('/config');
+        return redirect('/config')->with('icons_status','アイコンデータの登録は完了しました！');
     }
 
     /**
@@ -84,9 +83,10 @@ class PoseiconsController extends Controller
      */
     public function update(Request $request, Poseicon $poseicon)
     {
+       
         // validate
         $request->validate([
-            'names' => 'required|max:10',
+            'icons_name' => 'required|max:10',
             'icons' => 'max:12000|mimes:png,jpg|sometimes|nullable',
             'old_name' => 'required',
         ]);
@@ -95,12 +95,14 @@ class PoseiconsController extends Controller
         if($request->file('icons') == !null){
             $file = $request->file('icons');
             $filename = 'pose-photo-' . time() . '.' . $file->getClientOriginalExtension();//
-            $file->storeAs('public/img', $filename);//名前変更で保存
+            $file->storeAs('/img', $filename,'public_store');//名前変更で保存
 
             $path = '/img/'.$request->old_name.''; //急ファイルのパス
             //ファイルがあるかどいうかチェック
-            if(Storage::disk('public')->exists($path)){
-                Storage::disk('public')->delete($path); 
+            if(Storage::disk('public_store')->exists($path)){
+                Storage::disk('public_store')->delete($path); 
+            }else{
+                return redirect('/poseicon/'.$request->icons_id.'')->with('icons_error_status','アイコンデータの削除はできませんでした！');
             }
         }
         else{
@@ -109,11 +111,11 @@ class PoseiconsController extends Controller
         //データを更新
         Poseicon::where('icons_id', $request->icons_id)
             ->update([
-                'name' => $request->names,
+                'icons_name' => $request->icons_name,
                 'icons' => $filename,
             ]);
         
-        return redirect('/poseicon/'.$request->icons_id.'')->with('status','アイコンデータの削除は完了しました！');
+        return redirect('/poseicon/'.$request->icons_id.'')->with('icons_status','アイコンデータの更新は完了しました！');
     }
 
     /**
@@ -127,24 +129,24 @@ class PoseiconsController extends Controller
 
         $path = '/img/'.$poseicon->icons;
           //削除    
-        if(Storage::disk('public')->exists($path)){
-            if(Storage::disk('public')->delete($path)){
+        if(Storage::disk('public_store')->exists($path)){
+            if(Storage::disk('public_store')->delete($path)){
                  //画像情報を削除
                  Poseicon::destroy($poseicon->icons_id);
             } else{
-                
+                return redirect('/poseicons/'.$poseicon->icons_id)->with('icons_error_status','アイコンデータの削除はできませんでした！');
             }
         }
 
         
-        return redirect('/config')->with('status','アイコンデータの削除は完了しました！');
+        return redirect('/config')->with('icons_status','アイコンデータの削除は完了しました！');
     }
     public function search($request){
-        $poseicon = Poseicon::where('icons_id','LIKE','%'.$request.'%')->orwhere('name','LIKE','%'.$request.'%')->orwhere('icons','LIKE','%'.$request.'%')->get();
+        $poseicon = Poseicon::where('icons_id','LIKE','%'.$request.'%')->orwhere('icons_name','LIKE','%'.$request.'%')->orwhere('icons','LIKE','%'.$request.'%')->get();
         return $poseicon;
     }
-    public function getIcons($request){
-        $icons = Poseicon::select('icons')->where('name',$request)->get();
+    public function getIcons(){
+        $icons = Poseicon::select('icons_name','icons')->get();
         return $icons;
     }
 }

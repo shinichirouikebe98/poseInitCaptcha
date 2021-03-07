@@ -12,21 +12,21 @@
     let cooldown = 5;
     let timeleft = 10;
     let canvas;
-    let icons;
-    let poseNumber;
 
+  
     let url = window.location.pathname;
     if(url == '/experiment'){
         fetchMetadata();
     }
     //開始までのタイマー(準備)
     function on_your_mark(){
-      // let poseicons = getIcons(test);
-      // console.log(poseicons);
-      // document.getElementById("icons").innerHTML = "<img src='{{ asset('storage/img/"+poseicon+"') }}'>";
+      let datas = test;
+      getIcons(datas);
+
+      
       let cd = setInterval(function(){
-        document.getElementById("time").innerHTML = " 残り" + cooldown + "秒ごに開始";
-        document.getElementById("poses").innerHTML = "カメラに向かって<h1 style='color:red;'>" +test+ "</h1>のポーズをやってください！ ";
+        document.getElementById("time").innerHTML = " 残り<span style='color:red;'>" +cooldown+ "</span>秒ごに開始";
+        document.getElementById("poses").innerHTML = "カメラに向かって<span style='color:red;'>" +test+ "</span>のポーズをやってください！ ";
         cooldown -= 1;
       
         if(cooldown==0){ 
@@ -42,9 +42,9 @@
 
     //ポーズをとる期間
     function timer(){
-      document.getElementById("poses").innerHTML = "カメラに向かって<h1 style='color:red;'>" +test+ "</h1>のポーズをやってください！ ";
+      document.getElementById("poses").innerHTML = "カメラに向かって<span style='color:red;'>" +test+ "</span>のポーズをやってください！ ";
       var timer = setInterval(function(){
-        document.getElementById("time").innerHTML = " 残り" + timeleft + "秒";
+        document.getElementById("time").innerHTML = " 残り<span style='color:red;'>" +timeleft+ "</span>秒";
         console.log(timeleft);
 
         timeleft -= 1;
@@ -61,7 +61,7 @@
 
     //main
     function setup() {
-      canvas = createCanvas(640, 480);
+      canvas = createCanvas(540, 380);
       canvas.hide();
       canvas.parent("capture"); 
       video = createCapture(VIDEO);
@@ -82,6 +82,7 @@
       on_your_mark();
     }
 
+    //モデルをロード
     function captchaModel(){
 
       let options = {
@@ -93,9 +94,9 @@
       brain = ml5.neuralNetwork(options);
 
       const modelInfo = {
-        model: 'storage/metadata/model/'+retrieveCookie('model'),
-        metadata: 'storage/metadata/meta/'+retrieveCookie('meta'),
-        weights: 'storage/metadata/weight/'+retrieveCookie('weight'),
+        model: 'metadata/model/'+retrieveCookie('model'),
+        metadata: 'metadata/meta/'+retrieveCookie('meta'),
+        weights: 'metadata/weight/'+retrieveCookie('weight'),
       };
 
       brain.load(modelInfo, brainLoaded);
@@ -104,7 +105,7 @@
 
     function captcha(){
           canvas.show();
-          scroll();
+          scroll('capture');
           poseNet = ml5.poseNet(video, modelLoaded);
           poseNet.on('pose', gotPoses);
           captchaModel();
@@ -116,14 +117,13 @@
       classifyPose(); 
     }
 
-    function getIcons(test){
+    async function getIcons(datas){
       let token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-      let icons = test;
-      let url = 'poseicon/req/'+icons;
-
-      fetch(url,{
+      let test_icons = datas;
+      console.log(test_icons);
+      fetch('poseicon/req',{
         headers: {
-          "Accept-Charset": "utf-8, iso-8859-1",
+          "Accept-Charset": "utf-8",
           "Content-Type": "application/json;charset=UTF-8",
           "Accept": "application/json, text-plain, */*",
           "X-Requested-With": "XMLHttpRequest",
@@ -133,10 +133,15 @@
           },
         method: 'get',
         credentials: "same-origin"
-      }).then(icons => icons.json()).then(icons => {
-        console.log(icons);
+      }).then(icon => icon.json()).then(icon =>{
+          let data;
+          data = icon.filter(x => x.icons_name === test_icons);
 
+          let path = '/img/'+data[0].icons;
+          document.getElementById('icons').innerHTML = `<img src='${path}' width='150' height'150'>`;
       })
+      
+
 
     }
     
@@ -194,6 +199,7 @@
                 method: 'get',
                 credentials: "same-origin"
               })
+
               .then(response => response.json()).then(response =>{
 
                   console.log(response);
@@ -218,7 +224,7 @@
                     document.cookie = "pose1="+predata[0].pose_one;
                     document.cookie = "pose2="+predata[0].pose_two;
                     document.cookie = "pose3="+predata[0].pose_three;
-                    randomize();
+                    
 
                   })
                 })
@@ -249,10 +255,12 @@
        let x = retrieveCookie('poseNumber');
        console.log(x);
        for(let i = 0; i < cname.length; i++){
-
-          poseName.push(retrieveCookie(cname[i]))
+          if(cname[i] !== '-'){
+            poseName.push(retrieveCookie(cname[i]));
+          }
+          
        }
-      let num = Math.floor(Math.random() * x); 
+      let num = Math.floor(Math.random() * poseName.length); 
       console.log(poseName[num]);
       return poseName[num];
 
@@ -323,7 +331,7 @@
           document.getElementById("poses").innerHTML = "";
           document.getElementById("icons").innerHTML = "";
           document.getElementById("btn").visibility ="visible";
-          document.getElementById("btn").innerHTML = "<input type='button' value='やり直し！' onclick='resetCaptcha()'>";
+          document.getElementById("btn").innerHTML = "<input type='button' value='やり直し！' class='btn btn-primary' onclick='resetCaptcha()'>";
           document.getElementById("fail").innerHTML = "失敗です。やり直し！";
       }
 
@@ -334,6 +342,7 @@
         console.log('poseNet ready');
         on_your_mark();//テストを受ける前に準備時間を表す関数
     }
+    
     //draw
     function draw() {
         //表示設定
@@ -368,8 +377,9 @@
     }
 
     //DOM↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-    function scroll(){
-      let content = document.getElementById('capture'); 
+    //オートスクロール
+    function scroll(target){
+      let content = document.getElementById(`${target}`); 
       content.scrollIntoView({
         behavior: "smooth",
         block: "start",

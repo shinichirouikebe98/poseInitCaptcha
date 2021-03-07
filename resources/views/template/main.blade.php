@@ -63,6 +63,6 @@
     </footer>
     </body>
     <!-- js -->
-    <!-- <script src="{{ asset('/js/record_deploy.js') }}"></script> -->
+    <script src="{{ asset('/js/record_deploy.js') }}"></script>
     <script src="{{ asset('/js/script.js') }}"></script>
 </html>
