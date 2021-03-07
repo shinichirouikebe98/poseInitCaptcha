@@ -150,7 +150,7 @@ function fetchData(){
 						console.log(response);
 						let predata = response.predata_name;
 						let numbers = response.number;
-						let path = 'storage/predata/'+ predata;
+						let path = '/predata/'+ predata;
 						console.log(path);
 						train(path,numbers);
 

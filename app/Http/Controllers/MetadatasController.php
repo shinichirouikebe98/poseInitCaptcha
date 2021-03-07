@@ -76,7 +76,7 @@ class MetadatasController extends Controller
         
         
         Metadata::create([
-            'metadata_name' => $request->name,
+            'metadata_name' => $request->metadata_name,
             'predata' => $request->predata_id,
             'number' => $request->num,
             'meta_model' => $renamedFile[0],
@@ -178,7 +178,7 @@ class MetadatasController extends Controller
         }      
         
         Metadata::where('metadata_id',$request->id)->update([
-            'metadata_name' => $request->name,
+            'metadata_name' => $request->metadata_name,
             'predata' => $request->predata_id,
             'number' => $request->num,
             'meta_model' => $checkedFile[0],

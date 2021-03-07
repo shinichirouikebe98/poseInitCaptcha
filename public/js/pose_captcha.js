@@ -61,7 +61,7 @@
 
     //main
     function setup() {
-      canvas = createCanvas(540, 380);
+      canvas = createCanvas(640, 480);
       canvas.hide();
       canvas.parent("capture"); 
       video = createCapture(VIDEO);
