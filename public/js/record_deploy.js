@@ -6,6 +6,7 @@ let brain;
 let targetLabel;
 let state ='waiting';
 let count = 0;
+let record_times = 0;
 
 
 //pose情報記録
@@ -17,6 +18,7 @@ function getData(){
 		console.log('姿勢データ収得開始');
 		document.getElementById('start').innerHTML='姿勢データ収得開始';
 		state='collecting';
+		
 		if(state == 'collecting'){
 			let stop = setInterval(function(){
 				count += 1;
@@ -26,6 +28,11 @@ function getData(){
 					clearInterval(stop);
 					document.getElementById('timer').innerHTML ='';	
 					count = 0;
+					record_times += 1;
+					if(record_times === 3){
+						savesPoses();
+						location.reload();
+					}
 				}
 			},1000)
 		}
@@ -120,7 +127,6 @@ function setup(){
 function fetchData(){
 	let token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 	const trainBtn = document.querySelectorAll('#train');
-	console.log('ss');
 
 		 trainBtn.forEach(btn => {
 			  btn.addEventListener('click',function(){

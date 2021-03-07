@@ -11,13 +11,13 @@
             <input type="hidden" name="old_name" id="old_name" value="{{$predatas->predata_name}}">
 
             <label>カテゴリーネーム:</label>
-            <input type="text" name="name" id="name" value="{{$predatas->name}}" class="form-control">
+            <input type="text" name="predata_cat_name" id="predata_cat_name" value="{{$predatas->predata_cat_name}}" class="form-control">
 
             <label>ポーズデータ:</label>
             <input type="file" name="predata" id="predata" class="form-control"> 
 
            <label>ポーズ数:</label>
-           <select name="number" id="number" class="select">
+           <select name="number" id="number" class="select form-control">
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
@@ -26,7 +26,7 @@
             
 
             <label>ポーズ1:</label>
-            <select name="pose1" id="pose1" class="select">
+            <select name="pose1" id="pose1" class="select form-control">
                 @foreach($poseicons as $poseicon)
                     <option value="{{$poseicon->name}}">{{$poseicon->name}}</option>
                 @endforeach
@@ -34,7 +34,7 @@
             </select>
              
             <label>ポーズ2:</label>
-            <select name="pose2" id="pose2" class="select">
+            <select name="pose2" id="pose2" class="select form-control">
                 @foreach($poseicons as $poseicon)
                     <option value="{{$poseicon->name}}">{{$poseicon->name}}</option>
                 @endforeach
@@ -42,9 +42,9 @@
             </select>
 
             <label>ポーズ3:</label>
-            <select name="pose3" id="pose3" class="select">
+            <select name="pose3" id="pose3" class="select form-control">
                 @foreach($poseicons as $poseicon)
-                    <option value="{{$poseicon->name}}">{{$poseicon->name}}</option>
+                    <option value="{{$poseicon->name}}">{{$poseicon->icons_name}}</option>
                 @endforeach
                     <option value="{{$predatas->pose_three}}" selected>{{$predatas->pose_three}}</option>
             </select> 
@@ -64,16 +64,27 @@
                         </ul>
                     </div>
         @endif
+        @if (session('predata_status'))
+            <div class="alert alert-success">
+                {{ session('predata_status') }}
+            </div>
+        @endif
+        @if (session('predata_error_status'))
+            <div class="alert alert-success">
+                {{ session('predata_error_status') }}
+            </div>
+        @endif
+        
             <div class="big-boxes center neumophism">
                     <div class="icons-frame">
-                        <img src="{{ asset('storage/img/logo.png') }}" class="rounded img-fluid" style="padding:30px;" />
+                        <img src="{{ asset('img/logo.png') }}" class="rounded img-fluid" style="padding:30px;" />
                     </div>
                     <h1>{{$predatas->name}}</h1>
                     <div class="info box">
                         <h4 class="mini-title">ICON 情報</h4>
                         <ul>
                             <li>PREDATA ID : {{$predatas->predata_id}}</li>
-                            <li>PREDATA ネーム: {{$predatas->name}}</li>
+                            <li>PREDATA ネーム: {{$predatas->predata_cat_name}}</li>
                             <li>ファイルネーム: {{$predatas->predata_name}}</li>
                             <li>ポーズ数: {{$predatas->number}}</li>
                             <li>ポーズ１: {{$predatas->pose_one}}</li>
