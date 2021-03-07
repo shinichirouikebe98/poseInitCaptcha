@@ -1,14 +1,13 @@
 {
     let el = document.getElementById('number');
     let el2 = document.getElementById('predata_id');
+    
     if(el){
        el.addEventListener('change',hideandseek);
     }
     if(el2){
         document.getElementById('predata_id').addEventListener("change",fetchNum);
     }
-
-    
 
     let select = document.getElementById('pose1');
     let select2 = document.getElementById('pose2');
@@ -19,8 +18,6 @@
     let array = [select,select2,select3];
     let labels = [label,label2,label3];
     let url = window.location.pathname;
-
-    // console.log(url);
 
     if(url == '/predata/'){
         document.getElementById('number').addEventListener('load',hideandseek);
@@ -34,11 +31,10 @@
         }
     }
 
-
+    //COMBOBOXの表示非表示
     function hideandseek(){
         let value = document.getElementById('number').value;
-        // console.log(value);
-
+        
         if(value  == 1){
             select.style.display = 'block';
             select2.style.display = 'none';
@@ -72,13 +68,13 @@
         
     }
 
+    //コンボボックス内容追加
     function addOption(value){
         let option = document.createElement("option");
         option.text = "一つ選んでください！";
         option.value = "-";
         
         for(let i = array.length; i > value ; i-- ){
-            // console.log(array[f++]);
             if(optionExists('-', array[1]) == false){
                 array[1].appendChild(option);
             }
