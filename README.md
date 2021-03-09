@@ -20,12 +20,13 @@
     <li><a href="https://www.tensorflow.org/lite/models/pose_estimation/overview">Posenet</a></li>
     <li><a href="https://learn.ml5js.org/">ml5.js</a></li>
     <li><a href="https://p5js.org/">p5.js</a></li>
+    <li><a href="https://getbootstrap.com/docs/5.0/getting-started/introduction/">Bootstrap</a></li>
     <li><a href="https://laravel.com/">php (Laravel)</a></li>
 </ul>
 <h3>CAPTCHA仕組み：</h3>
 <ul>
     <li>データの記録</li>
-    POSENETと言われるWebブラウザでリアルタイムに人間の姿勢を推定できる機械学習モデルを基に「ポーズ」データの記録を行いう。POSENETの役割としては、WEBカメラから入力された動画を分析し人間の32箇所の関節を検知して座標として表す。チューリングテストに使用するポーズに対する関節の座標データを記録し,そのポーズに対する座標データの名前を付ける。
+    POSENETと言われるWebブラウザでリアルタイムに人間の姿勢を推定できる機械学習モデルを基に「ポーズ」データの記録を行いう。POSENETの役割としては、WEBカメラから入力された動画を分析し人間の17箇所の関節を検知して座標として表す。チューリングテストに使用するポーズに対する関節の座標データを記録し,そのポーズに対する座標データの名前を付ける。
     <li>データの学習</li>
     TensorFlow.jsのインターフェースとして誕生した、より初心者向けのML5.jsと言うJavaScriptベース機械学習ライブラリーを利用する。ニューラルネットワークを作成し、ポーズデータの記録から得たデータに基づいてポーズのモデル学習を行う。
     <li>姿勢識別</li>
@@ -35,8 +36,12 @@
 </ul>
 
 <h2>参考動画</h2>
+<ul>
+    <li>機械学習による姿勢推定を適用したCAPTCHAのざっくり概要紹介動画：https://youtu.be/c0TbbeZCXMw</li>
+    <li>機械学習による姿勢推定を適用したCAPTCHAの構成設定管理システムの紹介動画：https://youtu.be/ZmOTZnNb4IE</li>
+    <li>テスト：https://user-images.githubusercontent.com/57369264/109387203-54f45300-7943-11eb-8c5c-17bbad61efc2.mp4</li>
+</ul>
 
-https://user-images.githubusercontent.com/57369264/109387203-54f45300-7943-11eb-8c5c-17bbad61efc2.mp4
 
 
 
